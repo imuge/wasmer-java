@@ -13,9 +13,13 @@ public class Imports {
             System.loadLibrary("wasmer_jni");
         }
     }
+
     private static native long nativeImportsInstantiate(List<Spec> imports, long modulePointer) throws RuntimeException;
+
     private static native long nativeImportsChain(long back, long froont) throws RuntimeException;
+
     private static native long nativeImportsWasi(long modulePointer) throws RuntimeException;
+
     private static native void nativeDrop(long nativePointer);
 
     final long importsPointer;
@@ -72,6 +76,10 @@ public class Imports {
             this.argTypes = Collections.unmodifiableList(argTypes);
             this.retTypes = Collections.unmodifiableList(retTypes);
         }
+
+        public Spec(String name, Function<List<Number>, List<Number>> function, List<Type> argTypes, List<Type> retTypes) {
+            this("env", name, function, argTypes, retTypes);
+        }
     }
 
     private Imports(long importsPointer) {
@@ -83,7 +91,7 @@ public class Imports {
     }
 
     public static Imports chain(Imports back, Imports front) {
-       return new Imports(nativeImportsChain(back.importsPointer, front.importsPointer));
+        return new Imports(nativeImportsChain(back.importsPointer, front.importsPointer));
     }
 
     public static Imports wasi(Module module) {
